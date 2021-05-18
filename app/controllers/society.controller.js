@@ -28,7 +28,7 @@ exports.create = (req, res) => {
 }
 
 exports.get = (req, res) => {
-  const id = req.params.id
+  const id = req.query.id
   var condition = id ? { id: { [Op.like]: `%${id}%` } } : null;
 
   Society.findAll({ where: condition })
