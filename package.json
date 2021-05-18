@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "version": "0.0.1",
+  "description": "Test API",
+  "main": "index.js",
+  "author": "Charles Ballester <ballester.charles@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "chai": "^4.3.4",
+    "express": "^4.17.1",
+    "mocha": "^8.4.0",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0"
+  }
+}
