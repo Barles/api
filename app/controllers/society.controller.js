@@ -1,5 +1,6 @@
 const db = require('../../models')
 const Society = db.Society
+const User = db.User
 const { uuid } = require('uuidv4')
 const Op = db.Sequelize.Op
 
@@ -16,19 +17,38 @@ exports.create = (req, res) => {
     users_id: req.body.users || null
   }
 
+  if (society.user_id != null) {
+    society.user_id.forEach((item, i) => {
+      User.findAll({ where: { id: item }})
+        .then(data => {
+          const societies = data.societies_id || []
+          societies.push(society.id)
+          User.update({
+            societies_id: societies
+          }, {
+            where: { id: item }
+          })
+            .catch(err => {
+              res.status(500).send()
+            })
+        })
+        .catch(err => {
+          res.status(500).send()
+        })
+    });
+  }
+
   Society.create(society)
     .then(data => {
       res.send(data)
     })
     .catch(err => {
-      res.status(500).send({
-        message: err.message || "Error while creating Society"
-      })
+      res.status(500).send()
     })
 }
 
 exports.get = (req, res) => {
-  const id = req.params.id
+  const id = req.query.id
   var condition = id ? { id: { [Op.like]: `%${id}%` } } : null;
 
   Society.findAll({ where: condition })
@@ -36,14 +56,34 @@ exports.get = (req, res) => {
       res.send(data)
     })
     .catch(err => {
-      res.status(500).send({
-        message: err.message || "Error while fetching Societies"
-      })
+      res.status(500).send()
     })
 }
 
 exports.update = (req, res) => {
   const id = req.params.id
+
+  if (req.body.users_id != null) {
+    req.body.users_id.forEach((item, i) => {
+      User.findAll({ where: { id: item }})
+        .then(data => {
+          const societies = data.societies_id || []
+          societies.push(id)
+          User.update({
+            societies_id: societies
+          }, {
+            where: { id: item }
+          })
+            .catch(err => {
+              res.status(500).send()
+            })
+        })
+        .catch(err => {
+          res.status(500).send()
+        })
+    });
+  }
+
 
   Society.update(req.body, {
     where: { id: id }
@@ -60,9 +100,7 @@ exports.update = (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: err.message || "Error while updating Society"
-      })
+      res.status(500).send()
     })
 }
 
@@ -84,8 +122,6 @@ exports.delete = (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: err.message || "Error while deleting Society"
-      })
+      res.status(500).send()
     })
 }
