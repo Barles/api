@@ -7,6 +7,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 require('./app/routes/society.routes')(app)
+require('./app/routes/user.routes')(app)
 
 const PORT = process.env.PORT || 4000
 app.listen(PORT, () => {
